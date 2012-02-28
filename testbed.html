@@ -41,7 +41,7 @@
 
           $('#result').empty();
           var code = editor.getSession().getValue();
-          eval(code);
+          $('#live_code').html(code);
           localStorage['d3playground'] = code;
         });
       });
@@ -59,6 +59,7 @@
       <!-- Test code. -->
       <div id='code_wrapper' class='span7'>
         <h2>Code</h2>
+        <script id='live_code'></script>
         <div id='editor_container'>
         <div id='editor'>
 // Data
