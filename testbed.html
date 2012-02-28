@@ -1,0 +1,103 @@
+<html>
+  <head>
+    <title>D3 Testbed</title>
+    <script src='jquery-1.7.1.min.js'></script>
+    <script src='d3/d3.v2.js'></script>
+    <script src='ace-0.2.0/src/ace.js'></script>
+    <script src="ace-0.2.0/src/mode-javascript.js" type="text/javascript" charset="utf-8"></script>
+    <link href="bootstrap/css/bootstrap.css" rel="stylesheet">
+    <style>
+      #editor_container { height: 600px; }
+      #editor {
+        position: absolute;
+        width: 540px;
+        height: 600px;
+      }
+
+      #result {
+        height: 600px;
+        border: 1px solid #DFDFDF;
+      }
+    </style>
+    <script>
+      $('document').ready(function() {
+        var editor = ace.edit('editor');
+        var JavaScriptMode = require("ace/mode/javascript").Mode;
+        editor.getSession().setMode(new JavaScriptMode());
+
+        editor.getSession().on('change', function() {
+          $('#test_code').removeAttr('disabled');
+          $('#test_code').removeClass('disabled');
+        });
+
+        $('#test_code').click(function() {
+          $(this).attr('disabled', 'true');
+          $(this).addClass('disabled');
+
+          $('#result').empty();
+          var code = editor.getSession().getValue();
+          eval(code);
+        });
+      });
+    </script>
+  </head>
+  <body>
+
+    <div class='container'>
+      <div class='page-header'>
+        <h1>D3 Testbed</h1>
+      </div>
+
+      <div class='row'>
+
+      <!-- Test code. -->
+      <div id='code_wrapper' class='span7'>
+        <h2>Code</h2>
+        <div id='editor_container'>
+        <div id='editor'>
+// Data
+var data = [
+  1,
+  1,
+  2,
+  3,
+  5,
+  8
+];
+
+// Visualization
+var w = $('#result').width(), h = $('#result').height();
+
+var x = d3.scale.linear()
+    .domain([0, d3.max(data)])
+    .range([0, w]);
+var y = function(d) { return x(d) };
+
+var svg = d3.select('#result').append('svg')
+    .attr('width', w)
+    .attr('height', h);
+
+svg.selectAll('circle')
+  .data(data)
+  .enter().append('circle')
+    .attr('r', '10')
+    .attr('fill', 'red')
+    .attr('cx', function(d) { return x(d); })
+    .attr('cy', function(d) { return y(d); });
+
+</div></div>
+        <br/>
+        <button id='test_code' class='btn btn-large btn-primary'><i class='icon-refresh'></i>Test</button>
+      </div>
+
+      <!-- Where the visualization will go. -->
+      <div id='result_wrapper' class='span5'>
+        <h2>Result</h2>
+        <div id='result'></div>
+      </div>
+
+      </div>
+    </div>
+
+  </body>
+</html>
