@@ -5,42 +5,64 @@
     <script src='d3/d3.v2.js'></script>
     <script src='ace-0.2.0/src/ace.js'></script>
     <script src="ace-0.2.0/src/mode-javascript.js" type="text/javascript" charset="utf-8"></script>
+    <script src="ace-0.2.0/src/mode-css.js" type="text/javascript" charset="utf-8"></script>
     <link href="bootstrap/css/bootstrap.css" rel="stylesheet">
     <style>
-      #editor_container { height: 300px; }
-      #editor {
+      #code_editor_container { height: 300px; }
+      #code_editor {
         position: absolute;
         width: 620px;
+        height: 300px;
+      }
+
+      #css_editor_container { height: 300px; }
+      #css_editor {
+        position: absolute;
+        width: 300px;
         height: 300px;
       }
 
       #result {
         min-height: 200px;
         border: 1px solid #DFDFDF;
+        margin-bottom: 2ex;
       }
     </style>
     <script>
       $('document').ready(function() {
-        var editor = ace.edit('editor');
+        var code_editor = ace.edit('code_editor');
+        var css_editor = ace.edit('css_editor');
+
         var JavaScriptMode = require("ace/mode/javascript").Mode;
-        editor.getSession().setMode(new JavaScriptMode());
+        var CssMode = require("ace/mode/css").Mode;
+
+        code_editor.getSession().setMode(new JavaScriptMode());
+        css_editor.getSession().setMode(new CssMode());
 
         var test = function() {
           $('#result').empty();
-          var code = editor.getSession().getValue();
+          var code = code_editor.getSession().getValue();
+          var css = css_editor.getSession().getValue();
+
           $('#live_code').remove();
+          $('#live_css').remove();
+
           $('body').append('<script id="live_code">'+code+'<\/script>');
+          $('body').append('<style id="live_css">'+css+'<\/style>');
 
           $('#test_code').attr('disabled', 'true');
           $('#test_code').addClass('disabled');
 
-          localStorage['d3playground'] = code;
+          localStorage['code'] = code;
+          localStorage['css'] = css;
         };
 
         // Load and execute stored code.
-        var contents = localStorage['d3playground'];
-        if (contents != undefined) {
-          editor.getSession().setValue(contents);
+        var code = localStorage['code'];
+        var css = localStorage['css'];
+        if (code != undefined || css != undefined) {
+          code_editor.getSession().setValue(code);
+          css_editor.getSession().setValue(css);
           test();
         }
 
@@ -48,7 +70,11 @@
         $('#test_code').click(test);
 
         // Re-enable button when the code has changed.
-        editor.getSession().on('change', function() {
+        code_editor.getSession().on('change', function() {
+          $('#test_code').removeAttr('disabled');
+          $('#test_code').removeClass('disabled');
+        });
+        css_editor.getSession().on('change', function() {
           $('#test_code').removeAttr('disabled');
           $('#test_code').removeClass('disabled');
         });
@@ -74,8 +100,8 @@
         <!-- Code editor -->
         <div id='code_wrapper' class='span8'>
           <h2>Code</h2>
-          <div id='editor_container'>
-          <div id='editor'>// Data
+          <div id='code_editor_container'>
+          <div id='code_editor'>// Data
 var data = [
   { x:1, y:1 },
   { x:2, y:1 },
@@ -113,7 +139,9 @@ svg.selectAll('circle')
         <!-- CSS editor -->
         <div class='span4'>
           <h2>Style</h2>
-          <div id='style'></div>
+          <div id='css_editor_container'>
+            <div id='css_editor'>#result circle { fill: green; }</div>
+          </div>
         </div>
 
       </div>
