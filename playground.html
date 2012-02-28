@@ -7,15 +7,15 @@
     <script src="ace-0.2.0/src/mode-javascript.js" type="text/javascript" charset="utf-8"></script>
     <link href="bootstrap/css/bootstrap.css" rel="stylesheet">
     <style>
-      #editor_container { height: 600px; }
+      #editor_container { height: 300px; }
       #editor {
         position: absolute;
-        width: 540px;
-        height: 600px;
+        width: 620px;
+        height: 300px;
       }
 
       #result {
-        height: 600px;
+        min-height: 200px;
         border: 1px solid #DFDFDF;
       }
     </style>
@@ -33,6 +33,8 @@
 
           $('#test_code').attr('disabled', 'true');
           $('#test_code').addClass('disabled');
+
+          localStorage['d3playground'] = code;
         };
 
         // Load and execute stored code.
@@ -43,10 +45,7 @@
         }
 
         // Run code, disable button, and save code, on button click.
-        $('#test_code').click(function() {
-          test();
-          localStorage['d3playground'] = code;
-        });
+        $('#test_code').click(test);
 
         // Re-enable button when the code has changed.
         editor.getSession().on('change', function() {
@@ -64,29 +63,36 @@
       </div>
 
       <div class='row'>
+        <div class='span12'>
+          <h2>Result</h2>
+          <div id='result'></div>
+        </div>
+      </div>
 
-      <!-- Test code. -->
-      <div id='code_wrapper' class='span7'>
-        <h2>Code</h2>
-        <div id='editor_container'>
-        <div id='editor'>
-// Data
+      <div class='row'>
+
+        <!-- Code editor -->
+        <div id='code_wrapper' class='span8'>
+          <h2>Code</h2>
+          <div id='editor_container'>
+          <div id='editor'>// Data
 var data = [
-  1,
-  1,
-  2,
-  3,
-  5,
-  8
+  { x:1, y:1 },
+  { x:2, y:1 },
+  { x:3, y:2 },
+  { x:4, y:3 },
+  { x:5, y:5 },
+  { x:6, y:8 }
 ];
 
 // Visualization
 var w = $('#result').width(), h = $('#result').height();
-
 var x = d3.scale.linear()
-    .domain([0, d3.max(data)])
+    .domain(d3.extent(data.map(function(d) { return d.x; })))
     .range([0, w]);
-var y = function(d) { return x(d) };
+var y = d3.scale.linear()
+    .domain(d3.extent(data.map(function(d) { return d.y; })))
+    .range([0, h]);
 
 var svg = d3.select('#result').append('svg')
     .attr('width', w)
@@ -97,19 +103,18 @@ svg.selectAll('circle')
   .enter().append('circle')
     .attr('r', '10')
     .attr('fill', 'red')
-    .attr('cx', function(d) { return x(d); })
-    .attr('cy', function(d) { return y(d); });
-
+    .attr('cx', function(d) { return x(d.x); })
+    .attr('cy', function(d) { return y(d.y); });
 </div></div>
-        <br/>
-        <button id='test_code' class='btn btn-large btn-primary'><i class='icon-refresh'></i>Test</button>
-      </div>
+          <br/>
+          <button id='test_code' class='btn btn-large btn-primary'><i class='icon-refresh'></i>Test</button>
+        </div>
 
-      <!-- Where the visualization will go. -->
-      <div class='span5'>
-        <h2>Result</h2>
-        <div id='result'></div>
-      </div>
+        <!-- CSS editor -->
+        <div class='span4'>
+          <h2>Style</h2>
+          <div id='style'></div>
+        </div>
 
       </div>
     </div>
