@@ -30,6 +30,7 @@
     </style>
     <script>
       $('document').ready(function() {
+        // Initialize editors.
         var code_editor = ace.edit('code_editor');
         var css_editor = ace.edit('css_editor');
 
@@ -37,8 +38,14 @@
         var CssMode = require("ace/mode/css").Mode;
 
         code_editor.getSession().setMode(new JavaScriptMode());
-        css_editor.getSession().setMode(new CssMode());
+        code_editor.getSession().setTabSize(2);
+        code_editor.getSession().setUseSoftTabs(true);
 
+        css_editor.getSession().setMode(new CssMode());
+        css_editor.getSession().setTabSize(2);
+        css_editor.getSession().setUseSoftTabs(true);
+
+        // This function executes the contents of the editors.
         var test = function() {
           $('#result').empty();
           var code = code_editor.getSession().getValue();
