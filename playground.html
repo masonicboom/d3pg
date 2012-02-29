@@ -28,65 +28,7 @@
         margin-bottom: 2ex;
       }
     </style>
-    <script>
-      $('document').ready(function() {
-        // Initialize editors.
-        var code_editor = ace.edit('code_editor');
-        var css_editor = ace.edit('css_editor');
-
-        var JavaScriptMode = require("ace/mode/javascript").Mode;
-        var CssMode = require("ace/mode/css").Mode;
-
-        code_editor.getSession().setMode(new JavaScriptMode());
-        code_editor.getSession().setTabSize(2);
-        code_editor.getSession().setUseSoftTabs(true);
-
-        css_editor.getSession().setMode(new CssMode());
-        css_editor.getSession().setTabSize(2);
-        css_editor.getSession().setUseSoftTabs(true);
-
-        // This function executes the contents of the editors.
-        var test = function() {
-          $('#result').empty();
-          var code = code_editor.getSession().getValue();
-          var css = css_editor.getSession().getValue();
-
-          $('#live_code').remove();
-          $('#live_css').remove();
-
-          $('body').append('<script id="live_code">'+code+'<\/script>');
-          $('body').append('<style id="live_css">'+css+'<\/style>');
-
-          $('#test_code').attr('disabled', 'true');
-          $('#test_code').addClass('disabled');
-
-          localStorage['code'] = code;
-          localStorage['css'] = css;
-        };
-
-        // Load and execute stored code.
-        var code = localStorage['code'];
-        var css = localStorage['css'];
-        if (code != undefined || css != undefined) {
-          code_editor.getSession().setValue(code);
-          css_editor.getSession().setValue(css);
-          test();
-        }
-
-        // Run code, disable button, and save code, on button click.
-        $('#test_code').click(test);
-
-        // Re-enable button when the code has changed.
-        code_editor.getSession().on('change', function() {
-          $('#test_code').removeAttr('disabled');
-          $('#test_code').removeClass('disabled');
-        });
-        css_editor.getSession().on('change', function() {
-          $('#test_code').removeAttr('disabled');
-          $('#test_code').removeClass('disabled');
-        });
-      });
-    </script>
+    <script src='d3pg.js'></script>
   </head>
   <body>
 
@@ -108,7 +50,23 @@
         <div id='code_wrapper' class='span8'>
           <h2>Code</h2>
           <div id='code_editor_container'>
-          <div id='code_editor'>// Data
+          <div id='code_editor'></div></div>
+          <br/>
+          <button id='test_code' class='btn btn-large btn-primary'><i class='icon-refresh'></i>Test</button>
+        </div>
+
+        <!-- CSS editor -->
+        <div class='span4'>
+          <h2>Style</h2>
+          <div id='css_editor_container'>
+            <div id='css_editor'></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div id='default_code' style='display: none'>// Data
 var data = [
   { x:1, y:1 },
   { x:2, y:1 },
@@ -138,21 +96,9 @@ svg.selectAll('circle')
     .attr('fill', 'red')
     .attr('cx', function(d) { return x(d.x); })
     .attr('cy', function(d) { return y(d.y); });
-</div></div>
-          <br/>
-          <button id='test_code' class='btn btn-large btn-primary'><i class='icon-refresh'></i>Test</button>
-        </div>
-
-        <!-- CSS editor -->
-        <div class='span4'>
-          <h2>Style</h2>
-          <div id='css_editor_container'>
-            <div id='css_editor'>#result circle { fill: green; }</div>
-          </div>
-        </div>
-
-      </div>
-    </div>
+</div>
+    <div id='default_css' style='display: none;'>#result circle { fill: green; }
+</div>
 
   </body>
 </html>
